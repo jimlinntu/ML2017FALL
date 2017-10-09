@@ -5,7 +5,6 @@ import argparse
 import datetime as dt
 from util import Loader, print_to_csv, plot_func
 from model import LinearRegressionModel
-from dnn import DNN
 import matplotlib.pyplot as plt
 class Config():
     def __init__(self, args, loader):
@@ -29,17 +28,16 @@ def main(args, debug=True, write_to_file=True, write_to_log=True):
     
     # load training data
     loader = Loader(args.train, args.label, args.batch_size)
-    
-    # set up training data and validation data
-    train = {}
-    valid = {}
-    all_train = {}
-    test = {}
-    train['X'], train['y'] = loader.load_numpy_data(args.train, args.label)
-    test['X'] = loader.load_test_data(args.testcsv)
-    valid['X'], valid['y'] = loader.load_numpy_data(args.valid_train, args.valid_label)
-    all_train['X'] = np.concatenate([train['X'], valid['X']], axis=0)
-    all_train['y'] = np.concatenate([train['y'], valid['y']], axis=0)
+    if args.train is not None and args.label is not None \
+    and args.valid_train is not None and args.valid_label is not None:
+        # set up training data and validation data
+        train = {}
+        valid = {}
+        all_train = {}
+        train['X'], train['y'] = loader.load_numpy_data(args.train, args.label)
+        valid['X'], valid['y'] = loader.load_numpy_data(args.valid_train, args.valid_label)
+        all_train['X'] = np.concatenate([train['X'], valid['X']], axis=0)
+        all_train['y'] = np.concatenate([train['y'], valid['y']], axis=0)
     
     # config object
     config = Config(args, loader)
@@ -76,6 +74,8 @@ def main(args, debug=True, write_to_file=True, write_to_log=True):
             print("", file=file)
     # write test output file
     if write_to_file:
+        test = {}
+        test['X'] = loader.load_test_data(args.testcsv)
         # predict test
         test['y_'] = model.predict(test)
         # print to csv file
@@ -95,13 +95,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='ML2017/hw1')
     parser.add_argument('option', type=str, help='option')
     parser.add_argument('regularize', type=float, help='regularize')
-    parser.add_argument('train', type=str, help='train_numpy')
-    parser.add_argument('label', type=str, help='label_numpy')
-    parser.add_argument('valid_train', type=str, help='valid_train')
-    parser.add_argument('valid_label', type=str, help='valid_label')
     parser.add_argument('testcsv', type=str, help='test.csv')
     parser.add_argument('testout', type=str, help="test_out.csv")
-    #parser.add_argument('model', type=str, help='Linear Regression')
+    parser.add_argument('--train', type=str, default=None, help='train_numpy')
+    parser.add_argument('--label', type=str, default=None, help='label_numpy')
+    parser.add_argument('--valid_train', type=str, default=None, help='valid_train')
+    parser.add_argument('--valid_label', type=str, default=None, help='valid_label')
     parser.add_argument('--n_epochs', type=int, default=1000,
                         help='number of epochs')
     parser.add_argument('--lr', type=float, default=0.5,
