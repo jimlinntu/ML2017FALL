@@ -53,7 +53,7 @@ def main(args, debug=True, write_to_file=True, write_to_log=True):
         all_train_loss, _ = model.fit(all_train, None)
     
     # save param
-    param = ['w', 'b', 'mu', 'sd']
+    param = ['w', 'b', 'mu', 'sigma']
     filename = ["./param/%s_%d%02d%02d_%02d%02d" % (p, now.year, now.month, now.day, now.hour, now.minute) for p in param]
     if args.load_prev == False:
         model.save_param(filename)
