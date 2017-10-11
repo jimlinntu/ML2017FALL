@@ -3,7 +3,7 @@ import pandas as pd
 import random
 import argparse
 import datetime as dt
-from util import Loader, print_to_csv, plot_func
+from util import Loader, print_to_csv#, plot_func
 from model import LinearRegressionModel
 import matplotlib.pyplot as plt
 class Config():
@@ -116,14 +116,3 @@ if __name__ == '__main__':
                         help='normalize type')
     args = parser.parse_args()
     main(args, debug=False, write_to_file=True)
-    if False:
-        lines = ["PM2.5_power2_NO {} train_numpy label_numpy ./test.csv ./testout".format(0.1 ** i) for i in range(0, 4+1)] 
-        regu = [0.1 ** i for i in range(0, 4+1)]
-        train_losses = []
-        valid_losses = []
-        for line in lines:
-            args = parser.parse_args(line.split())
-            _, valid_loss, all_train_loss = main(args, False, False)
-            train_losses.append(all_train_loss)
-            valid_losses.append(valid_loss)
-        plot_func(regu, train_losses, valid_losses)

@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 class Loader(object):
     def load_numpy_data(self, train_name, label_name, replace_NR=True,):
         X = np.load(train_name)
@@ -64,7 +64,7 @@ def print_to_csv(y_, filename):
     d = {'id': ["id_{}".format(i) for i in range(size)], 'value': y_}
     df = pd.DataFrame(data=d)
     df.to_csv(filename, index=False)
-
+'''
 def plot_func(regu, train_losses, valid_losses):
     plt.xlabel("lambda")
     plt.ylabel("RMSE(without regularization loss)")
@@ -74,3 +74,4 @@ def plot_func(regu, train_losses, valid_losses):
     plt.plot(regu, valid_losses, "g", label="Valid")
     plt.legend(loc="upper center")
     plt.show("Regu")
+'''
