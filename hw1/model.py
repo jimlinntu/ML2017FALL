@@ -1,5 +1,5 @@
 import numpy as np
-from tqdm import tqdm
+#from tqdm import tqdm
 class LinearRegressionModel(object):
     def generate_param(self, X):
         self.w = np.ones((X.shape[1]))
@@ -145,7 +145,7 @@ class LinearRegressionModel(object):
         N_example = train['X'].shape[0]
         length = N_example // self.config.batch_size
 
-        for i in tqdm(range(length)):
+        for i in range(length):
             batch = next(batch_generator)
             loss = self.train_on_batch(batch['X'], batch['y'])
             losses.append(loss)
