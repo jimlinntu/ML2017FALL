@@ -5,7 +5,7 @@ import argparse
 import datetime as dt
 from util import Loader, print_to_csv#, plot_func
 from model import LinearRegressionModel
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 class Config():
     def __init__(self, args, loader):
         # feature matrix
