@@ -94,7 +94,7 @@ class LogisticRegression(object):
         self.feature_preprocessing(train['X'])
         # training
         losses = []
-        for epoch in tqdm(range(self.config.n_epochs)):
+        for epoch in range(self.config.n_epochs):
             #print("Epoch {} out of {}".format(epoch + 1, self.config.n_epochs))
             loss = self.run_epoch(train)
             losses.append(loss)
