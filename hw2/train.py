@@ -85,8 +85,7 @@ def main():
             print("option:{}".format(args.option), file=file)
             print("regularization:{}".format(args.regularize), file=file)
             print("train loss: {}".format(train_loss), file=file)
-            if args.true_csv is not None:
-                print("valid accuracy: {}".format(test_accuracy), file=file)
+            
             #print("total train loss: {}".format(all_train_loss), file=file)
             print("", file=file)
     
