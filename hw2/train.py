@@ -17,7 +17,7 @@ class Config():
 def main():
     # parse argument
     parser = argparse.ArgumentParser(description='ML2017/hw1')
-    parser.add_argument('model', type=str, help='L(ogistic) or G(enerative) or T(orch) or RF(Random forest)')
+    parser.add_argument('model', type=str, help='L(ogistic) or G(enerative) or RF(Random forest)')
     parser.add_argument('option', type=str, help='option')
     parser.add_argument('regularize', type=float, help='regularize')
     parser.add_argument('X_train', type=str, help='X_train')
@@ -51,8 +51,6 @@ def main():
         model = LogisticRegression(config)
     elif args.model == "G":
         model = GenerativeModel(config)
-    elif args.model == "T":
-        model = Torch_Logistic_Regression(config)
     elif args.model == "RF":
         model = RandomForestModel(config)
 
