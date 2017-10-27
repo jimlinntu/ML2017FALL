@@ -1,9 +1,5 @@
 from import_modules import *
-############################################################
-def load_true_csv(Y_filename):
-    y_df = pd.read_csv(Y_filename, header=0)
-    return np.squeeze(y_df['label'].as_matrix())
-############################################################
+
 class Preprocessor():
     def load_data(self, X_filename, Y_filename=None):
         data = {}
