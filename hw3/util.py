@@ -2,24 +2,32 @@ from import_modules import *
 class Preprocess():
     
     def read_csv(self, train_filename, test_filename):
-        train_df = pd.read_csv(train_filename, header=0)
-        test_df = pd.read_csv(test_filename, header=0)
+        train_df = None
+        test_df = None
+        if train_filename is not None:
+            train_df = pd.read_csv(train_filename, header=0)
+        if test_filename is not None:
+            test_df = pd.read_csv(test_filename, header=0)
         return train_df, test_df
 
     def create_numpy(self, train_df, test_df):
         # init numpy dict
-        train = {}
-        test = {}
+        train = None
+        test = None
 
         # split element in feature column
-        train_X_series = train_df['feature'].apply(lambda x: x.split())
-        train_y_series = train_df['label']
-        train['X'] = np.reshape(np.stack(train_X_series, axis=0).astype(float), [-1, 48, 48])
-        train['y'] = np.stack(train_y_series, axis=0)
+        if train_df is not None:
+            train = {}
+            train_X_series = train_df['feature'].apply(lambda x: x.split())
+            train_y_series = train_df['label']
+            train['X'] = np.reshape(np.stack(train_X_series, axis=0).astype(float), [-1, 48, 48])
+            train['y'] = np.stack(train_y_series, axis=0)
 
         # test
-        test_X_series = test_df['feature'].apply(lambda x: x.split())
-        test['X'] = np.reshape(np.stack(test_X_series, axis=0).astype(float), [-1, 48, 48])
+        if test_df is not None:
+            test = {}
+            test_X_series = test_df['feature'].apply(lambda x: x.split())
+            test['X'] = np.reshape(np.stack(test_X_series, axis=0).astype(float), [-1, 48, 48])
         return train, test
 
     def load_data(self):

@@ -96,7 +96,7 @@ class BaseLineCNNWrapper():
             for tup, _ in zip(batch_gener.flow(np.expand_dims(train['X'],axis=-1), train['y'], batch_size=self.config.batch_size), 
                 range(quotient)):
                 batch_X, batch_y = tup[0], tup[1]
-
+                
                 #pdb.set_trace()
                 loss = self.train_on_batch(batch_X, batch_y, model, optimizer, loss_op)
                 
@@ -105,6 +105,9 @@ class BaseLineCNNWrapper():
                 batches += 1
                 if batches == quotient:
                     break
+
+
+
         accuracy = accuracy / (quotient * batch_size)
         print("Last Loss {}".format(loss))
         return loss, accuracy 

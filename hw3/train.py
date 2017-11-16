@@ -9,23 +9,18 @@ class Config():
         self.n_epochs = args.n_epochs
         self.lr = args.lr
         self.option = args.option
-        self.regularize = args.regularize
-        self.load_prev = args.load_prev
         self.timestamp = args.timestamp
-        self.normalize = args.normalize
-        self.cuda = True
+        self.cuda = False
         self.param_folder = args.param_folder
         self.log = args.log
 
 def main():
     # parse argument
     parser = argparse.ArgumentParser(description='ML2017/hw1')
-    parser.add_argument('model', type=str, help='L(ogistic) or G(enerative) or RF(Random forest)')
     parser.add_argument('option', type=str, help='option')
-    parser.add_argument('regularize', type=float, help='regularize')
-    parser.add_argument('train_filename', type=str, help='train.csv')
-    parser.add_argument('test_filename', type=str, help='test.csv')
-    parser.add_argument('testout', type=str, help="test_out.csv")
+    parser.add_argument('--train_filename', type=str, help='train.csv', default=None)
+    parser.add_argument('--test_filename', type=str, help='test.csv', default=None)
+    parser.add_argument('--testout', type=str, help="test_out.csv", default=None)
     parser.add_argument('--log', type=str, default="./log")
     parser.add_argument('--data_aug', type=bool, default=False)
     parser.add_argument('--param_folder', type=str, default="./param")
@@ -36,13 +31,7 @@ def main():
                         help='learning rate')
     parser.add_argument('--batch_size', type=int, default=32,
                         help='batch size, -1 denote train on all training data')
-    parser.add_argument('--load_prev', type=bool, default=False,
-                        help='load_prev')
     parser.add_argument('--timestamp', type=str, help='timestamp ex.20171002_1743')
-    parser.add_argument('--name', type=str, default='NN',
-                        help='name for the model, will be the directory name for summary')
-    parser.add_argument('--normalize', type=str, default="Z",
-                        help='normalize type')
     args = parser.parse_args()
     
     # init model
@@ -66,13 +55,24 @@ def main():
 
     # fit
     print("=" * 80 + "\nModel fit\n" + "=" * 80)
-    train_accuracy, valid_accuracy = model.fit(train, None, timeline)
+    if train is not None:
+        train_accuracy, valid_accuracy = model.fit(train, None, timeline)
 
     # predict test data
-    test['y_'] = model.predict(test['X'])
+    if test is not None:
+        # load model
+        model.model.load_state_dict(torch.load(os.path.join(args.param_folder, args.timestamp)))
+        # load normalize value
+        with open(os.path.join(args.param_folder, args.timestamp) + "mean", "rb") as f:
+            model.mean = pickle.load(f)
 
-    # save log file
-    # write log file
+        with open(os.path.join(args.param_folder, args.timestamp) + "std", "rb") as f:
+            model.std = pickle.load(f)
+
+        test['y_'] = model.predict(test['X'])
+
+        print_to_csv(test['y_'], args.testout)
+    
     '''
     if args.load_prev == False:
         
@@ -89,8 +89,6 @@ def main():
             #print("total train loss: {}".format(all_train_loss), file=file)
             print("", file=file)
     '''
-    # print to csv 
-    print_to_csv(test['y_'], args.testout)
     return 0
 
 if __name__ == '__main__':
