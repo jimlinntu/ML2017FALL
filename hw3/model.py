@@ -82,7 +82,7 @@ class BaseLineCNNWrapper():
             remainder = train['X'].shape[0] - quotient * batch_size
 
             accuracy = 0.0
-            for _ in tqdm(range(quotient)):
+            for _ in range(quotient):
                 batch = next(batch_gener)
                 loss = self.train_on_batch(batch['X'], batch['y'], model, optimizer, loss_op)
                 
@@ -94,7 +94,7 @@ class BaseLineCNNWrapper():
             quotient = train['X'].shape[0] // batch_size
             accuracy = 0.0
             for tup, _ in zip(batch_gener.flow(np.expand_dims(train['X'],axis=-1), train['y'], batch_size=self.config.batch_size), 
-                tqdm(range(quotient))):
+                range(quotient)):
                 batch_X, batch_y = tup[0], tup[1]
 
                 #pdb.set_trace()

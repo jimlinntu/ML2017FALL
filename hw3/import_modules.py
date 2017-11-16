@@ -1,4 +1,4 @@
-from tqdm import tqdm
+#from tqdm import tqdm
 import datetime as dt
 import pdb
 import argparse
