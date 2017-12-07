@@ -149,7 +149,7 @@ class Sample_Encode:
             batch['y'] = y
             batch['lengths'] = lengths
             yield batch
-
+'''
 class BOW():
     def __init__(self):
         self.vectorizer = CountVectorizer(max_features=10000)
@@ -218,7 +218,7 @@ class BOW():
                 batch['y'] = None
             batch['lengths'] = None
             yield batch
-
+'''
 class Voc:
     def __init__(self):
         self.word2index = {}

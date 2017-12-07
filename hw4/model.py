@@ -6,12 +6,8 @@ class SentimentClassifier():
         self.config = config
 
     def build_model(self):
-        if not USE_BOW:
-            self.model = DeepJimNetwork(self.voc.n_words, 100, 200, 1, True, self.voc.embedding_matrix)
-        else:
-            self.model = DNN(self.bow.dim)
-            print(self.model)
-
+        self.model = DeepJimNetwork(self.voc.n_words, 100, 200, 1, True, self.voc.embedding_matrix)
+        
         if USE_CUDA:
             self.model = self.model.cuda()
 
@@ -33,7 +29,7 @@ class SentimentClassifier():
         q = train_df.shape[0] // self.config.batch_size + int(train_df.shape[0] % self.config.batch_size !=0)
         training_accuracy = 0.
         
-        for batch in tqdm(generator, total=q):
+        for batch in generator:
             #
             self.optimizer.zero_grad()
             #
@@ -76,7 +72,7 @@ class SentimentClassifier():
             generator = self.bow.batch_generator(valid_df, self.config.batch_size)
         valid_accuracy = 0.
         valid_losses = []
-        for batch in tqdm(generator, total=q):
+        for batch in generator:
             self.model.eval()
             batch['X'] = batch['X'].cuda() if USE_CUDA else batch['X']
             batch['y'] = batch['y'].cuda() if USE_CUDA else batch['y']
@@ -103,33 +99,23 @@ class SentimentClassifier():
             self.model.load_state_dict(torch.load("./param/"+ "time: 20171208_0003"))
             return None, None, None, None, -1
         
+        # fit to voc
+        try:
+            with open("./param/voc", "rb") as f:
+                self.voc = pickle.load(f)
+                
+        except FileNotFoundError:
+            self.voc = Voc()
+            self.voc.fit(train_df, train_df_no_label)
+            with open("./param/voc", "wb") as f:
+                pickle.dump(self.voc, f)
         
-        if USE_BOW != True:
-            # fit to voc
-            try:
-                with open("./param/voc", "rb") as f:
-                    self.voc = pickle.load(f)
-                    
-            except FileNotFoundError:
-                self.voc = Voc()
-                self.voc.fit(train_df, train_df_no_label)
-                with open("./param/voc", "wb") as f:
-                    pickle.dump(self.voc, f)
-        else:
-            self.bow = BOW()
-            # count bag of word
-            self.bow.fit(train_df, train_df_no_label)
-
-
-
         # build model
         self.build_model()
 
         # build sample encode
-        if USE_BOW != True:
-            sample_encode = Sample_Encode(self.voc)
-        else:
-            sample_encode = None
+        sample_encode = Sample_Encode(self.voc)
+        
 
         training_accuracy_list = []
         valid_accuracy_list = []
@@ -182,20 +168,18 @@ class SentimentClassifier():
     def predict(self, df):
         batch_size = self.config.batch_size
         self.model.eval()
-        if USE_BOW != True:
-            sample_encode = Sample_Encode(self.voc)
-            # Warning!!
-            # sample_encode generator generates wrong batch['y'] when it receives test_df
-            g = sample_encode.generator(df, batch_size, shuffle=False, training=False)
-        else:
-            g = self.bow.batch_generator(df, batch_size, shuffle=False, training=False)
+        sample_encode = Sample_Encode(self.voc)
+        # Warning!!
+        # sample_encode generator generates wrong batch['y'] when it receives test_df
+        g = sample_encode.generator(df, batch_size, shuffle=False, training=False)
+        
         
         N = df.shape[0] // batch_size + int(df.shape[0] % batch_size != 0)
 
         y_ = []
         argmax_y_ = []
         try:
-            for batch in tqdm(g, total=N):
+            for batch in g:
                 if USE_CUDA:
                     batch['X'] = batch['X'].cuda()
                     

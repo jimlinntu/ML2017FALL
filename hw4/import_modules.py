@@ -9,17 +9,17 @@ from torch.autograd import Variable
 import torch.optim as optim
 import numpy as np
 import pdb
-from tqdm import tqdm
+#from tqdm import tqdm
 import argparse
 import datetime as dt
 import pickle
 import unicodedata
 import re
 from gensim.models.word2vec import Word2Vec
-from sklearn.feature_extraction.text import CountVectorizer
+#from sklearn.feature_extraction.text import CountVectorizer
 import string
 ###############################
-from IPython import embed
+
 ###############################
 USE_BOW = False
 USE_CUDA = torch.cuda.is_available()
