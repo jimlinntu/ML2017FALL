@@ -37,7 +37,7 @@ class Is_it_same_classifier():
             model.load_state_dict(torch.load(os.path.join(self.config.param_folder, "besttime: 20180102_1519")))
             g = batch_generator(image_array, batch_size=300, shuffle=False, volatile=True)
             reduced_image_array = []
-            pdb.set_trace()
+            
             for batch in g:
                 X_, code = model(batch["X"])
                 reduced_image_array.append(code.cpu().data.numpy())
